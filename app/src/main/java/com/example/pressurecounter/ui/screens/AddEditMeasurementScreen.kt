@@ -4,11 +4,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -159,25 +163,29 @@ fun AddEditMeasurementScreen(
                     .padding(paddingValues)
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 // Pressure inputs
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Column(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(20.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Text(
-                            text = "Давление и пульс",
+                            text = "Показатели",
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
                         )
                         
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             OutlinedTextField(
                                 value = systolic,
@@ -185,11 +193,11 @@ fun AddEditMeasurementScreen(
                                     systolic = it.filter { c -> c.isDigit() }.take(3)
                                     systolicError = null
                                 },
-                                label = { Text("Верхнее (систолическое)") },
-                                suffix = { Text("мм") },
+                                label = { Text("Верхнее") },
+                                suffix = { Text("SYS") },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 isError = systolicError != null,
-                                supportingText = systolicError?.let { { Text(it) } },
+                                shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier.weight(1f),
                                 singleLine = true
                             )
@@ -200,11 +208,11 @@ fun AddEditMeasurementScreen(
                                     diastolic = it.filter { c -> c.isDigit() }.take(3)
                                     diastolicError = null
                                 },
-                                label = { Text("Нижнее (диастолическое)") },
-                                suffix = { Text("мм") },
+                                label = { Text("Нижнее") },
+                                suffix = { Text("DIA") },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 isError = diastolicError != null,
-                                supportingText = diastolicError?.let { { Text(it) } },
+                                shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier.weight(1f),
                                 singleLine = true
                             )
@@ -218,9 +226,10 @@ fun AddEditMeasurementScreen(
                             },
                             label = { Text("Пульс") },
                             suffix = { Text("уд/мин") },
+                            leadingIcon = { Icon(Icons.Default.Favorite, null, tint = MaterialTheme.colorScheme.error) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             isError = pulseError != null,
-                            supportingText = pulseError?.let { { Text(it) } },
+                            shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true
                         )
@@ -228,61 +237,67 @@ fun AddEditMeasurementScreen(
                 }
                 
                 // Date and time
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                    
+                    Button(
+                        onClick = { showDatePicker = true },
+                        modifier = Modifier.weight(1f).height(50.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(0.dp)
                     ) {
-                        Text(
-                            text = "Дата и время",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            OutlinedButton(
-                                onClick = { showDatePicker = true },
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.forLanguageTag("ru"))
-                                Text(dateFormat.format(Date(selectedDateTime)))
-                            }
-                            
-                            OutlinedButton(
-                                onClick = { showTimePicker = true },
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                val timeFormat = SimpleDateFormat("HH:mm", Locale.forLanguageTag("ru"))
-                                Text(timeFormat.format(Date(selectedDateTime)))
-                            }
-                        }
+                        Icon(Icons.Default.DateRange, null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(dateFormat.format(Date(selectedDateTime)))
+                    }
+                    
+                    Button(
+                        onClick = { showTimePicker = true },
+                        modifier = Modifier.weight(1f).height(50.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(0.dp)
+                    ) {
+                        Icon(Icons.Default.Schedule, null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(timeFormat.format(Date(selectedDateTime)))
                     }
                 }
                 
                 // Feeling selection
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                     shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        modifier = Modifier.padding(20.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
                             text = "Самочувствие",
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
                         )
                         
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .selectableGroup(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Feeling.entries.forEach { feeling ->
                                 Column(
@@ -302,7 +317,8 @@ fun AddEditMeasurementScreen(
                                     if (selectedFeeling == feeling) {
                                         Text(
                                             text = feeling.description,
-                                            style = MaterialTheme.typography.bodySmall
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.primary
                                         )
                                     }
                                 }
@@ -312,30 +328,17 @@ fun AddEditMeasurementScreen(
                 }
                 
                 // Notes
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = "Заметки",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        
-                        OutlinedTextField(
-                            value = notes,
-                            onValueChange = { notes = it },
-                            placeholder = { Text("Опционально: лекарства, активность...") },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(100.dp),
-                            maxLines = 4
-                        )
-                    }
-                }
+                OutlinedTextField(
+                    value = notes,
+                    onValueChange = { notes = it },
+                    label = { Text("Заметки") },
+                    placeholder = { Text("Опционально: лекарства, активность...") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    maxLines = 4
+                )
                 
                 // Save button
                 Button(
@@ -346,11 +349,13 @@ fun AddEditMeasurementScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp)
+                        .height(56.dp),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
                     Text(
-                        text = if (isEditing) "Сохранить изменения" else "Сохранить измерение",
-                        style = MaterialTheme.typography.titleMedium
+                        text = if (isEditing) "Сохранить изменения" else "Сохранить",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
                 }
                 

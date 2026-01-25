@@ -18,18 +18,22 @@ import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryDarkTheme,
-    onPrimary = Color(0xFF003258),
-    primaryContainer = Color(0xFF004880),
-    onPrimaryContainer = Color(0xFFD1E4FF),
+    onPrimary = Color(0xFF0F172A), // Dark slate
+    primaryContainer = Color(0xFF312E81),
+    onPrimaryContainer = Color(0xFFE0E7FF),
     secondary = SecondaryDarkTheme,
-    onSecondary = Color(0xFF003735),
-    secondaryContainer = Color(0xFF00504D),
-    onSecondaryContainer = Color(0xFFB2DFDB),
-    tertiary = Color(0xFFCFBCFF),
+    onSecondary = Color(0xFF0F172A),
+    secondaryContainer = Color(0xFF115E59),
+    onSecondaryContainer = Color(0xFFCCFBF1),
+    tertiary = Color(0xFFE11D48),
+    tertiaryContainer = Color(0xFF881337),
+    onTertiaryContainer = Color(0xFFFFE4E6),    
     background = BackgroundDark,
     surface = SurfaceDark,
-    onBackground = Color(0xFFE6E1E5),
-    onSurface = Color(0xFFE6E1E5),
+    surfaceVariant = SurfaceVariantDark,
+    onBackground = Color(0xFFE2E8F0), // Slate 200
+    onSurface = Color(0xFFE2E8F0),
+    outline = Color(0xFF94A3B8)
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -43,11 +47,14 @@ private val LightColorScheme = lightColorScheme(
     onSecondaryContainer = OnSecondaryContainer,
     tertiary = Tertiary,
     tertiaryContainer = TertiaryContainer,
+    onTertiaryContainer = OnTertiaryContainer,
     background = Background,
     surface = Surface,
     surfaceVariant = SurfaceVariant,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
+    onBackground = Color(0xFF0F172A), // Slate 900
+    onSurface = Color(0xFF0F172A),
+    onSurfaceVariant = OnSurfaceVariant,
+    outline = Outline
 )
 
 @Composable
