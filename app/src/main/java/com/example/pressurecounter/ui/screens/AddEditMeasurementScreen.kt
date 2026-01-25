@@ -17,6 +17,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -49,6 +56,11 @@ fun AddEditMeasurementScreen(
     
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
+    
+    // Focus requesters for auto-switching between fields
+    val systolicFocusRequester = remember { FocusRequester() }
+    val diastolicFocusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
     
     val isEditing = measurementId != null
     var isLoading by remember { mutableStateOf(isEditing) }
@@ -135,7 +147,10 @@ fun AddEditMeasurementScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            if (validateAndSave()) {
+                            // If systolic has exactly 2 digits, switch focus to diastolic
+                            if (systolic.length == 2) {
+                                diastolicFocusRequester.requestFocus()
+                            } else if (validateAndSave()) {
                                 onNavigateBack()
                             }
                         }
@@ -189,16 +204,32 @@ fun AddEditMeasurementScreen(
                         ) {
                             OutlinedTextField(
                                 value = systolic,
-                                onValueChange = { 
-                                    systolic = it.filter { c -> c.isDigit() }.take(3)
+                                onValueChange = { newValue ->
+                                    systolic = newValue.filter { c -> c.isDigit() }.take(3)
                                     systolicError = null
+                                    
+                                    // Auto-switch to diastolic when 3 digits are entered
+                                    if (systolic.length == 3) {
+                                        diastolicFocusRequester.requestFocus()
+                                    }
                                 },
                                 label = { Text("Верхнее") },
                                 suffix = { Text("SYS") },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 isError = systolicError != null,
                                 shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .focusRequester(systolicFocusRequester)
+                                    .onKeyEvent { keyEvent ->
+                                        // Switch to diastolic on Enter/Done key (2 digits)
+                                        if ((keyEvent.key == Key.Enter || keyEvent.key == Key.Tab) && systolic.length == 2) {
+                                            diastolicFocusRequester.requestFocus()
+                                            true
+                                        } else {
+                                            false
+                                        }
+                                    },
                                 singleLine = true
                             )
                             
@@ -213,7 +244,9 @@ fun AddEditMeasurementScreen(
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 isError = diastolicError != null,
                                 shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .focusRequester(diastolicFocusRequester),
                                 singleLine = true
                             )
                         }
