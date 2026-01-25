@@ -5,6 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -26,6 +27,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,6 +62,8 @@ fun AddEditMeasurementScreen(
     // Focus requesters for auto-switching between fields
     val systolicFocusRequester = remember { FocusRequester() }
     val diastolicFocusRequester = remember { FocusRequester() }
+    val pulseFocusRequester = remember { FocusRequester() }
+    val notesFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     
     val isEditing = measurementId != null
@@ -176,6 +180,7 @@ fun AddEditMeasurementScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
+                    .imePadding()
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -215,7 +220,13 @@ fun AddEditMeasurementScreen(
                                 },
                                 label = { Text("Верхнее") },
                                 suffix = { Text("SYS") },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Next
+                                ),
+                                keyboardActions = KeyboardActions(
+                                    onNext = { diastolicFocusRequester.requestFocus() }
+                                ),
                                 isError = systolicError != null,
                                 shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier
@@ -238,10 +249,21 @@ fun AddEditMeasurementScreen(
                                 onValueChange = { 
                                     diastolic = it.filter { c -> c.isDigit() }.take(3)
                                     diastolicError = null
+                                    
+                                    // Auto-switch to pulse when 3 digits are entered
+                                    if (diastolic.length == 3) {
+                                        pulseFocusRequester.requestFocus()
+                                    }
                                 },
                                 label = { Text("Нижнее") },
                                 suffix = { Text("DIA") },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Next
+                                ),
+                                keyboardActions = KeyboardActions(
+                                    onNext = { pulseFocusRequester.requestFocus() }
+                                ),
                                 isError = diastolicError != null,
                                 shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier
@@ -256,14 +278,27 @@ fun AddEditMeasurementScreen(
                             onValueChange = { 
                                 pulse = it.filter { c -> c.isDigit() }.take(3)
                                 pulseError = null
+                                
+                                // Auto-switch to notes when 3 digits are entered
+                                if (pulse.length == 3) {
+                                    notesFocusRequester.requestFocus()
+                                }
                             },
                             label = { Text("Пульс") },
                             suffix = { Text("уд/мин") },
                             leadingIcon = { Icon(Icons.Default.Favorite, null, tint = MaterialTheme.colorScheme.error) },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Next
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onNext = { notesFocusRequester.requestFocus() }
+                            ),
                             isError = pulseError != null,
                             shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(pulseFocusRequester),
                             singleLine = true
                         )
                     }
@@ -337,7 +372,10 @@ fun AddEditMeasurementScreen(
                                     modifier = Modifier
                                         .selectable(
                                             selected = selectedFeeling == feeling,
-                                            onClick = { selectedFeeling = feeling },
+                                            onClick = { 
+                                                selectedFeeling = feeling
+                                                focusManager.clearFocus() 
+                                            },
                                             role = Role.RadioButton
                                         )
                                         .padding(8.dp),
@@ -368,8 +406,15 @@ fun AddEditMeasurementScreen(
                     placeholder = { Text("Опционально: лекарства, активность...") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(100.dp),
+                        .height(100.dp)
+                        .focusRequester(notesFocusRequester),
                     shape = RoundedCornerShape(16.dp),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    ),
                     maxLines = 4
                 )
                 
