@@ -242,7 +242,7 @@ fun StatCard(
     modifier: Modifier = Modifier,
     icon: ImageVector? = null
 ) {
-    Card(
+     Card(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         shape = RoundedCornerShape(20.dp),
@@ -252,7 +252,8 @@ fun StatCard(
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .fillMaxHeight(),
             horizontalAlignment = Alignment.Start
         ) {
             Text(
@@ -261,7 +262,10 @@ fun StatCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.heightIn(min = 32.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 if (icon != null) {
                     Icon(
                         imageVector = icon,

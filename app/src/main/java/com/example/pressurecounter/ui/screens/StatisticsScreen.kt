@@ -138,7 +138,9 @@ fun StatisticsPageContent(
             )
             
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 StatCard(
@@ -146,21 +148,27 @@ fun StatisticsPageContent(
                     value = "${statistics.avgSystolic?.toInt() ?: "-"}",
                     subtitle = "мм рт.ст.",
                     color = ChartSystolic,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
                 )
                 StatCard(
                     title = "Диастолическое",
                     value = "${statistics.avgDiastolic?.toInt() ?: "-"}",
                     subtitle = "мм рт.ст.",
                     color = ChartDiastolic,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
                 )
                 StatCard(
                     title = "Пульс",
                     value = "${statistics.avgPulse?.toInt() ?: "-"}",
                     subtitle = "уд/мин",
                     color = ChartPulse,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
                 )
             }
             
@@ -172,7 +180,9 @@ fun StatisticsPageContent(
             )
             
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 StatCard(
@@ -180,19 +190,25 @@ fun StatisticsPageContent(
                     value = "${statistics.minSystolic ?: "-"} / ${statistics.maxSystolic ?: "-"}",
                     subtitle = "мин / макс",
                     color = ChartSystolic,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
                 )
                 StatCard(
                     title = "Диастолическое",
                     value = "${statistics.minDiastolic ?: "-"} / ${statistics.maxDiastolic ?: "-"}",
                     subtitle = "мин / макс",
                     color = ChartDiastolic,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
                 )
             }
             
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 StatCard(
@@ -200,20 +216,20 @@ fun StatisticsPageContent(
                     value = "${statistics.minPulse ?: "-"} / ${statistics.maxPulse ?: "-"}",
                     subtitle = "мин / макс",
                     color = ChartPulse,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
                 )
                 
-                // Pulse pressure (average)
-                val avgPulsePressure = statistics.avgDiastolic?.let { diastolic ->
-                    (statistics.avgSystolic - diastolic).toInt()
-                }
-                
+                // Pulse pressure (min/avg)
                 StatCard(
                     title = "Пульсовое давление",
-                    value = "${avgPulsePressure ?: "-"}",
-                    subtitle = "среднее",
+                    value = "${statistics.minPulsePressure ?: "-"} / ${statistics.avgPulsePressure?.toInt() ?: "-"}",
+                    subtitle = "мин / ср",
                     color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
                 )
             }
             

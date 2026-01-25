@@ -149,7 +149,9 @@ fun HomeScreen(
                 SectionHeader(title = "Статистика за неделю")
                 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Max),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     StatCard(
@@ -157,7 +159,9 @@ fun HomeScreen(
                         value = "${weekStats!!.avgSystolic?.toInt() ?: "-"}/${weekStats!!.avgDiastolic?.toInt() ?: "-"}",
                         subtitle = "мм рт.ст.",
                         color = ChartSystolic,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
                         icon = null // Or a gauge icon
                     )
                     StatCard(
@@ -165,7 +169,9 @@ fun HomeScreen(
                         value = "${weekStats!!.avgPulse?.toInt() ?: "-"}",
                         subtitle = "уд/мин",
                         color = ChartPulse,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
                         icon = Icons.Default.Favorite
                     )
                 }

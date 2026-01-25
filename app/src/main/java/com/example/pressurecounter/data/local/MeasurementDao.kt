@@ -49,6 +49,12 @@ interface MeasurementDao {
     @Query("SELECT MAX(pulse) FROM measurements WHERE timestamp >= :startTime AND timestamp <= :endTime")
     suspend fun getMaxPulse(startTime: Long, endTime: Long): Int?
     
+    @Query("SELECT MIN(systolic - diastolic) FROM measurements WHERE timestamp >= :startTime AND timestamp <= :endTime")
+    suspend fun getMinPulsePressure(startTime: Long, endTime: Long): Int?
+    
+    @Query("SELECT AVG(systolic - diastolic) FROM measurements WHERE timestamp >= :startTime AND timestamp <= :endTime")
+    suspend fun getAvgPulsePressure(startTime: Long, endTime: Long): Double?
+    
     @Query("SELECT COUNT(*) FROM measurements")
     fun getTotalCount(): Flow<Int>
     

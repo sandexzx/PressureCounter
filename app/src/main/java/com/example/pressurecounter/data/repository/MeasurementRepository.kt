@@ -73,7 +73,9 @@ class MeasurementRepository(private val measurementDao: MeasurementDao) {
             minDiastolic = measurementDao.getMinDiastolic(startTime, endTime),
             maxDiastolic = measurementDao.getMaxDiastolic(startTime, endTime),
             minPulse = measurementDao.getMinPulse(startTime, endTime),
-            maxPulse = measurementDao.getMaxPulse(startTime, endTime)
+            maxPulse = measurementDao.getMaxPulse(startTime, endTime),
+            minPulsePressure = measurementDao.getMinPulsePressure(startTime, endTime),
+            avgPulsePressure = measurementDao.getAvgPulsePressure(startTime, endTime)
         )
     }
 }
@@ -87,5 +89,7 @@ data class Statistics(
     val minDiastolic: Int?,
     val maxDiastolic: Int?,
     val minPulse: Int?,
-    val maxPulse: Int?
+    val maxPulse: Int?,
+    val minPulsePressure: Int?,
+    val avgPulsePressure: Double?
 )
