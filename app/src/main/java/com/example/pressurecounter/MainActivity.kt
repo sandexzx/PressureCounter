@@ -16,6 +16,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.pressurecounter.ui.components.ModernNavigationBar
 import com.example.pressurecounter.ui.navigation.PressureNavHost
 import com.example.pressurecounter.ui.navigation.Screen
 import com.example.pressurecounter.ui.navigation.bottomNavItems
@@ -51,28 +52,22 @@ fun PressureApp(viewModel: MeasurementViewModel) {
     
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             if (showBottomBar) {
-                NavigationBar {
-                    bottomNavItems.forEach { screen ->
-                        NavigationBarItem(
-                            icon = { 
-                                screen.icon?.let { Icon(it, contentDescription = screen.title) }
-                            },
-                            label = { Text(screen.title) },
-                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                            onClick = {
-                                navController.navigate(screen.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
+                ModernNavigationBar(
+                    items = bottomNavItems,
+                    currentDestination = currentDestination,
+                    onItemClick = { screen ->
+                        navController.navigate(screen.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
                             }
-                        )
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
-                }
+                )
             }
         }
     ) { innerPadding ->
